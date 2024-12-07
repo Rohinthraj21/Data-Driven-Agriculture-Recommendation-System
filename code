@@ -1,0 +1,41 @@
+ Code for Model Training
+ #importing necessary libraries
+ from sklearn.linear_model import LogisticRegression
+ from sklearn.metrics import classification_report, accuracy_score, plot_confusion_matrix
+ from sklearn.model_selection import GridSearchCV
+ #Initializing the model
+ logis = LogisticRegression()
+ pred_logis = logis.fit(x_train,y_train).predict(x_test)
+ print('Confusion Matrix : \n')
+ fig, ax = plt.subplots(figsize=(15,15))
+ plot_confusion_matrix(logis,x_test,y_test,ax=ax,cmap=plt.cm.Blues)
+ plt.show()
+ #classification report
+ print('REPORT : \n',classification_report(y_test,pred_logis))
+ acc_logis = accuracy_score(y_test,pred_logis)
+ #importing necessary libraries
+ from sklearn.ensemble import RandomForestClassifier
+ #initializing the model and fitting for train data
+ rand = RandomForestClassifier()
+ pred_rand = rand.fit(x_train,y_train).predict(x_test)
+ acc_rand = accuracy_score(y_test,pred_rand)
+ acc_rand
+ #selecting parameters using GridSearchCV
+ param = {'n_estimators':range(10,50,10),
+ 'criterion':['gini'],
+ 'max_depth':range(1,20,2),
+ 'max_features':[1,2,3],
+ 'min_samples_leaf':range(1,10,2),
+ 'min_samples_split':range(1,40,10)}
+ grid_rand = GridSearchCV(rand,param,cv=5,n_jobs=-1,verbose=1)
+grid_rand.fit(x_train,y_train)
+ print(grid_rand.best_params_)
+ print(grid_rand.best_score_)
+ #predicting for test data and plotting confusion matrix
+ pred_rand = grid_rand.predict(x_test)
+ print('Confusion Matrix : \n')
+ fig, ax = plt.subplots(figsize=(15,15))
+ plot_confusion_matrix(grid_rand,x_test,y_test,ax=ax,cmap=plt.cm.Blues)
+ plt.show()
+ #classification report
+ print('REPORT : \n',classification_report(y_test,pred_rand))
